@@ -23,7 +23,7 @@ if(!M||!M.length){
     {
       id:1700000000001,
       t:"앱 소개",
-      c:"\n님의 취향 저격 미니 메모앱입니다\n메모 저장은 내 모바일에 되니 안심 !\n\n석삼자 버튼을 누르면 메모 배치가 바뀌어요\n다운/업 버튼으로 데이터 저장/데이터 복구를 해요\n(.csv 파일은 내 모바일에 직접 저장 되어요)\n작성된 메모에 핀을 꼽아 맨 위로 보내보세요\n메모를 꾹 누르면 드래그앤드롭이 가능합니다 !\n검색은 제목과 내용 모두 가능해요\n\n+ 버튼으로 새 메모를 기입해요\n제목과 내용을 쓰고 원하는 메모지 배경을 골라요\n제목은 안써도 저장 됩니다 !\n\n원하는 배경이 없나요?\n사진 이미지 클릭으로 내 사진도 가져올 수 있어요\n\n글씨가 잘 안보이나요?\n배경의 흐리기는 slide bar로 조절 되어요\n\n작성한 메모를 삭제하고 싶나요?\n휴지통 버튼을 클릭하고, !까지 누르면 삭제 !\n\n작성한 메모를 복사하고 싶나요?\n서류 버튼을 누르면 한방에 복사 !\n\n복사도 귀찮은가요?\n화살표 버튼으로 공유하기도 할 수 있답니다\n*메모별로 다운로드와 공유도 가능하지요\n\n!! 불편 사항은 언제든 환영 !\n",
+      c:"\n님의 취향 저격 미니 메모앱입니다\n메모 저장은 내 모바일에 되니 안심 !\n\n석삼자 버튼을 누르면 메모 배치가 바뀌어요\n다운/업 버튼으로 데이터 저장/데이터 복구를 해요\n(.csv 파일은 내 모바일에 직접 저장 되어요)\n작성된 메모에 핀을 꼽아 맨 위로 보내보세요\n메모를 꾹 누르면 드래그앤드롭이 가능합니다 !\n검색은 제목과 내용 모두 가능해요\n\n+ 버튼으로 새 메모를 기입해요\n제목과 내용을 쓰고 원하는 메모지 배경을 골라요\n제목은 안써도 저장 됩니다 !\n\n원하는 배경이 없나요?\n사진 이미지 클릭으로 내 사진도 가져올 수 있어요\n\n글씨가 잘 안보이나요?\n배경의 흐리기는 slide bar로 조절 되어요\n\n작성한 메모 삭제하고 싶나요?\n휴지통 버튼을 클릭하고, !까지 누르면 삭제 !\n\n작성한 메모를 복사하고 싶나요?\n서류 버튼을 누르면 한방에 복사 !\n\n복사도 귀찮은가요?\n화살표 버튼으로 공유하기도 할 수 있답니다\n*메모별로 다운로드와 공유도 가능하지요\n\n!! 불편 사항은 언제든 환영 !\n",
       p:0,
       pin:0,
       img:"t10",
@@ -50,7 +50,20 @@ function nudge(){let fu=+LS.fu;if(!fu){fu=Date.now();try{LS.fu=fu}catch(e){}}con
 const saveG=()=>{try{LS.g=JSON.stringify(G)}catch(e){toast('저장 공간 부족')}};
 function gi(id){return /^t\d+$/.test(id)?id.slice(1)+'.jpg':(G.find(g=>g.id==id)||{}).d}
 function migrate(){M.forEach(m=>{if(!m.u)m.u=m.id;if(m.img&&m.img.startsWith('data:')){let g=G.find(x=>x.d==m.img);if(!g){g={id:'g'+Math.random().toString(36).slice(2,9),d:m.img};G.push(g)}m.img=g.id}})}
-migrate();saveG();save();
+migrate();saveG();
+if(LS.m){
+  try{
+    let currentM = JSON.parse(LS.m);
+    let changed = false;
+    currentM.forEach(m => {
+      if(m.id == 1700000000001 && m.img !== 't10'){ m.img = 't10'; changed = true; }
+      if(m.id == 1700000000002 && m.img !== 't3'){ m.img = 't3'; changed = true; }
+    });
+    if(changed){ M = currentM; save(); }
+  }catch(e){}
+}
+save();
+
 function arm(b,ic,fn){let q=0;b.onclick=()=>{if(!q){q=1;b.textContent='❗';toast('한 번 더 누르면 삭제돼요');setTimeout(()=>{q=0;b.textContent=ic},3000);return}q=0;b.textContent=ic;fn()}}
 const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const fd=t=>{const d=new Date(t);return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0')};
@@ -127,6 +140,6 @@ function end(e){clearTimeout(tm);if(!dr)return;const t=document.elementFromPoint
 document.addEventListener('pointerup',end);document.addEventListener('pointercancel',end);
 $('vw').onclick=()=>{V=!V;try{LS.v=V?1:0}catch(e){}$('vw').textContent=V?'▦':'☰';render()};$('vw').textContent=V?'▦':'☰';
 render();
-if(navigator.storage&&navigator.storagepersist)navigator.storage.persist();
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();
 const nd=nudge();if(nd)setTimeout(()=>toast('백업한 지 '+nd+'일 지났어요 ⬇'),900);
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
